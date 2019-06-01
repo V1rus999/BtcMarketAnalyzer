@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
     val service = PairTickerStreamingService(
         exchangeFactory.getExchange(LunoExchange.exchangeName),
         exchangeFactory.getExchange(BinanceExchange.exchangeName),
-        BinanceLunoQueueManager()
+        BinanceLunoTickerManager()
     )
     println("Starting ${PairTickerStreamingService::class}")
     service.startDownloadingTickerData()

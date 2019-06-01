@@ -1,12 +1,12 @@
 import markets.Ticker
 import tickerHandling.InMemoryQueue
-import tickerHandling.QueueManager
+import tickerHandling.TickerManager
 
 /**
  * @Author: JohannesC
  * @Date: 2019-06-01, Sat
  **/
-class BinanceLunoQueueManager : QueueManager {
+class BinanceLunoTickerManager : TickerManager {
 
     private val queue = InMemoryQueue()
 

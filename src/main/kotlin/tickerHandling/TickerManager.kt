@@ -6,7 +6,7 @@ import markets.Ticker
  * @Author: JohannesC
  * @Date: 2019-06-01, Sat
  **/
-interface QueueManager {
+interface TickerManager {
 
     fun newTickerResultReceived(
         timeStamp: Long,

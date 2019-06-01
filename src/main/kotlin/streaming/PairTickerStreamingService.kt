@@ -4,7 +4,7 @@ import markets.Ticker
 import markets.crypto_exchanges.CryptoExchange
 import network.Failure
 import network.Success
-import tickerHandling.QueueManager
+import tickerHandling.TickerManager
 import java.awt.Robot
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -17,7 +17,7 @@ import java.awt.MouseInfo
 class PairTickerStreamingService(
     private val firstExchange: CryptoExchange,
     private val secondExchange: CryptoExchange,
-    private val queueManager: QueueManager
+    private val tickerManager: TickerManager
 ) {
 
     private var scheduler: ScheduledExecutorService? = null
@@ -31,7 +31,7 @@ class PairTickerStreamingService(
             val timeStamp = System.currentTimeMillis()
             val firstResult = getExchangeResult(firstExchange)
             val secondResult = getExchangeResult(secondExchange)
-            queueManager.newTickerResultReceived(timeStamp, firstResult, secondResult)
+            tickerManager.newTickerResultReceived(timeStamp, firstResult, secondResult)
 
             val pObj = MouseInfo.getPointerInfo().location
             robot.mouseMove(pObj.x + 1, pObj.y + 1)
