@@ -74,10 +74,6 @@ class LunoBinanceTickerManager(
 
     private fun getPriceIncreasePercentage(lastValue: Ticker.CryptoTicker?, ticker: Ticker.CryptoTicker): Double {
         val result = PriceCalculations.getPriceChangePercentage(lastValue?.price ?: 0.0, ticker.price)
-        return if (result < 0.00009) {
-            0.0
-        } else {
-            DoubleRounder.round(result, 4)
-        }
+        return DoubleRounder.round(result, 3)
     }
 }
