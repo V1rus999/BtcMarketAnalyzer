@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
     val service = PairTickerStreamingService(
         exchangeFactory.getExchange(LunoExchange.exchangeName),
         exchangeFactory.getExchange(BinanceExchange.exchangeName),
-        BinanceLunoTickerManager(GsonObjectWriter(outputFile), InMemoryQueue())
+        BinanceLunoTickerManager(GsonObjectWriter(::retrieveOutputFile), InMemoryQueue())
     )
     Logger.info("Starting ${PairTickerStreamingService::class}")
     service.startDownloadingTickerData()
@@ -47,10 +47,25 @@ fun main(args: Array<String>) {
     }
 }
 
+fun retrieveOutputFile(): File {
+    val current = LocalDateTime.now()
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val date = current.format(formatter)
+
+    val outputFile = File("tickerData/${date}Ticker.json")
+    if (!outputFile.parentFile.exists()) {
+        outputFile.parentFile.mkdir()
+    }
+
+    if (!outputFile.exists())
+        Logger.info("Created output file at ${outputFile.absolutePath}")
+    return outputFile
+}
+
 fun setupLogging(date: String) {
     val logLocation = "logging/${date}log.txt"
     try {
-        Configurator.defaultConfig().writer(ConsoleWriter()).writer(FileWriter(logLocation)).activate()
+        Configurator.defaultConfig().writer(FileWriter(logLocation)).activate()
         Logger.info("Successfully set up logging at $logLocation")
     } catch (e: Exception) {
         println("Error setting up logging $e")
