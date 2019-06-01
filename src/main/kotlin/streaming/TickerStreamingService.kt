@@ -4,6 +4,7 @@ import markets.Ticker
 import markets.crypto_exchanges.CryptoExchange
 import network.Failure
 import network.Success
+import org.pmw.tinylog.Logger
 import java.awt.Robot
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -26,22 +27,22 @@ class TickerStreamingService(
 
             val tickers = arrayListOf<Ticker.CryptoTicker>()
             for (exchange in cryptoExchanges) {
-                println("Checking ${exchange.exchangeName()}")
+                Logger.info("Checking ${exchange.exchangeName()}")
                 when (val result = exchange.getTicker()) {
                     is Success -> {
-                        println("Got results from ${exchange.exchangeName()}")
-                        println(result.value)
+                        Logger.info("Got results from ${exchange.exchangeName()}")
+                        Logger.info(result.value)
                         tickers.add(result.value)}
-                    is Failure -> println(result.reason)
+                    is Failure -> Logger.info(result.reason)
                 }
             }
             val pObj = MouseInfo.getPointerInfo().location
             robot.mouseMove(pObj.x + 1, pObj.y + 1)
             robot.mouseMove(pObj.x - 1, pObj.y - 1)
 
-            println("Got the following tickers: ")
-            println(tickers)
-            println("Rescheduling for 15 minutes")
+            Logger.info("Got the following tickers: ")
+            Logger.info(tickers)
+            Logger.info("Rescheduling for 15 minutes")
 
         }, 0, 15, TimeUnit.MINUTES)
     }

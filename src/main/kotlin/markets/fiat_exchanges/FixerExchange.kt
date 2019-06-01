@@ -4,6 +4,7 @@ import okhttp3.HttpUrl
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import markets.Ticker.Rates
+import org.pmw.tinylog.Logger
 
 /**
  * Created by johannesC on 2017/09/03.
@@ -25,7 +26,7 @@ class FixerExchange : FiatExchange {
             }
 
         } catch (e: Exception) {
-            println(e.toString())
+            Logger.error(e.toString())
         }
         return rates
     }
