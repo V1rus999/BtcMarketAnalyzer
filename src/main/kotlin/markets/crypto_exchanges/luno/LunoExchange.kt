@@ -2,11 +2,13 @@ package markets.crypto_exchanges.luno
 
 import markets.Ticker
 import markets.crypto_exchanges.CryptoExchange
+import markets.crypto_exchanges.binance.BinanceExchange
 import network.Failure
 import network.Result
 import okhttp3.HttpUrl
 import network.RetrofitFinMarketApi
 import network.Success
+import org.pmw.tinylog.Logger
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -33,6 +35,7 @@ class LunoExchange : CryptoExchange {
         try {
             val response = call.execute()
             if (response.isSuccessful) {
+                Logger.debug("Got data from $exchangeName", response.body())
                 tickers = extractTickers(response.body())
             } else {
                 return Failure(Exception("${exchangeName()} call failed ${response.code()}"))

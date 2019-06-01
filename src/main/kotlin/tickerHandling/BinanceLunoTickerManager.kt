@@ -2,6 +2,7 @@ package tickerHandling
 
 import markets.Ticker
 import org.decimal4j.util.DoubleRounder
+import org.pmw.tinylog.Logger
 import persistance.ObjectWriter
 import java.lang.Exception
 
@@ -23,20 +24,20 @@ class BinanceLunoTickerManager(
     ) {
         //We will assume the first value is luno and second is binance
         if (firstTicker == null || secondTicker == null) {
+            Logger.error("Ticker values received were null firstTicker $firstTicker secondTicker $secondTicker")
             return
         }
 
         val trackedTicker =
             generateTrackedTickerForTimestamp(timeStamp, firstTicker, secondTicker, queue.peekLastValue())
         queue.enqueue(trackedTicker)
-        println("Added item to queue")
-        println(trackedTicker)
+        Logger.info("Added item to queue", trackedTicker)
 
         try {
-            println("Flushing queue")
+            Logger.info("Flushing queue QUEUE_FLUSH_LIMIT $QUEUE_FLUSH_LIMIT")
             flushQueueToFile(queue)
         } catch (e: Exception) {
-            println("Issue flushing queue")
+            Logger.error(e, "Issue flushing queue")
         }
     }
 
@@ -71,7 +72,12 @@ class BinanceLunoTickerManager(
         return Ticker.TrackedTicker(timeStamp, Pair(lunoTicker, binanceTicker))
     }
 
-    private fun getPriceIncreasePercentage(lastValue: Ticker.CryptoTicker?, ticker: Ticker.CryptoTicker): Double =
-        DoubleRounder.round(PriceCalculations.getPriceChangePercentage(lastValue?.price ?: 0.0, ticker.price), 4)
-
+    private fun getPriceIncreasePercentage(lastValue: Ticker.CryptoTicker?, ticker: Ticker.CryptoTicker): Double {
+        val result = PriceCalculations.getPriceChangePercentage(lastValue?.price ?: 0.0, ticker.price)
+        return if (result < 0.00009) {
+            0.0
+        } else {
+            DoubleRounder.round(result, 4)
+        }
+    }
 }

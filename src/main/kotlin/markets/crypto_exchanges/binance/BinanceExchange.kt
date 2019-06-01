@@ -7,6 +7,7 @@ import network.Result
 import network.RetrofitFinMarketApi
 import network.Success
 import okhttp3.HttpUrl
+import org.pmw.tinylog.Logger
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
@@ -17,7 +18,6 @@ class BinanceExchange : CryptoExchange {
         const val exchangeName = "Binance"
     }
 
-    private val ASK = 5
     private val requestUrl = HttpUrl.parse("https://api.binance.com/")
     private val retrofit =
         Retrofit.Builder().baseUrl(requestUrl!!).addConverterFactory(GsonConverterFactory.create()).build()
@@ -32,6 +32,7 @@ class BinanceExchange : CryptoExchange {
         try {
             val response = call.execute()
             if (response.isSuccessful) {
+                Logger.debug("Got data from $exchangeName", response.body())
                 tickers = if (response.body() != null) Ticker.CryptoTicker(
                     response.body()!!.price,
                     "tBTCUSD",

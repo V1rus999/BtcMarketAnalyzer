@@ -1,7 +1,10 @@
 import markets.ExchangeFactory
-import markets.Ticker
 import markets.crypto_exchanges.binance.BinanceExchange
 import markets.crypto_exchanges.luno.LunoExchange
+import org.pmw.tinylog.Configurator
+import org.pmw.tinylog.Logger
+import org.pmw.tinylog.writers.ConsoleWriter
+import org.pmw.tinylog.writers.FileWriter
 import persistance.GsonObjectWriter
 import streaming.PairTickerStreamingService
 import tickerHandling.BinanceLunoTickerManager
@@ -18,12 +21,13 @@ fun main(args: Array<String>) {
     val current = LocalDateTime.now()
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val date = current.format(formatter)
+    setupLogging(date)
 
-    val outputFile = File("TickerData/${date}Ticker.json")
+    val outputFile = File("tickerData/${date}Ticker.json")
     if (!outputFile.parentFile.exists()) {
         outputFile.parentFile.mkdir()
     }
-    println("Created file at ${outputFile.absolutePath}")
+    Logger.info("Created output file at ${outputFile.absolutePath}")
 
     val exchangeFactory = ExchangeFactory()
     val service = PairTickerStreamingService(
@@ -31,14 +35,24 @@ fun main(args: Array<String>) {
         exchangeFactory.getExchange(BinanceExchange.exchangeName),
         BinanceLunoTickerManager(GsonObjectWriter(outputFile), InMemoryQueue())
     )
-    println("Starting ${PairTickerStreamingService::class}")
+    Logger.info("Starting ${PairTickerStreamingService::class}")
     service.startDownloadingTickerData()
 
     val `in` = BufferedReader(InputStreamReader(System.`in`))
     val a = `in`.readLine()
     if (a == "1") {
-        println("Stopping Service...")
+        Logger.info("Stopping Service...")
         service.stopDownloadingTickerData()
-        println("Quitting...")
+        Logger.info("Quitting...")
+    }
+}
+
+fun setupLogging(date: String) {
+    val logLocation = "logging/${date}log.txt"
+    try {
+        Configurator.defaultConfig().writer(ConsoleWriter()).writer(FileWriter(logLocation)).activate()
+        Logger.info("Successfully set up logging at $logLocation")
+    } catch (e: Exception) {
+        println("Error setting up logging $e")
     }
 }
