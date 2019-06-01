@@ -10,6 +10,12 @@ import markets.crypto_exchanges.luno.LunoExchange
  */
 class ExchangeFactory {
 
+    fun getExchange(name : String) : CryptoExchange = when(name) {
+        LunoExchange.exchangeName -> LunoExchange()
+        BitfinexExchange.exchangeName -> BitfinexExchange()
+        else -> throw Exception("Unsupported exchange")
+    }
+
     fun getExchanges(): List<CryptoExchange> {
         return arrayListOf(
             LunoExchange(),

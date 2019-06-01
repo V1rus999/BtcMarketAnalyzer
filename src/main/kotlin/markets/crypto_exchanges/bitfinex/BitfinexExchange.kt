@@ -13,13 +13,17 @@ import java.lang.Exception
 
 class BitfinexExchange : CryptoExchange {
 
+    companion object {
+        const val exchangeName = "Bitfinex"
+    }
+
     private val ASK = 4
     private val requestUrl = HttpUrl.parse("https://api-pub.bitfinex.com/")
     private val retrofit =
         Retrofit.Builder().baseUrl(requestUrl!!).addConverterFactory(GsonConverterFactory.create()).build()
     private val btcApi = retrofit.create(RetrofitFinMarketApi::class.java)
 
-    override fun exchangeName(): String = "Bitfinex"
+    override fun exchangeName(): String = exchangeName
 
     override fun getTicker(): Result<Ticker.CryptoTicker, Exception> {
         val call = btcApi.getBitfinexTicker()
