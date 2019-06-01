@@ -1,4 +1,4 @@
-package markets.crypto_exchanges.bitfinex
+package markets.crypto_exchanges.binance
 
 import markets.Ticker
 import markets.crypto_exchanges.CryptoExchange
@@ -11,24 +11,32 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 
-class BitfinexExchange : CryptoExchange {
+class BinanceExchange : CryptoExchange {
 
-    private val ASK = 4
-    private val requestUrl = HttpUrl.parse("https://api-pub.bitfinex.com/")
+    companion object {
+        const val exchangeName = "Binance"
+    }
+
+    private val ASK = 5
+    private val requestUrl = HttpUrl.parse("https://api.binance.com/")
     private val retrofit =
         Retrofit.Builder().baseUrl(requestUrl!!).addConverterFactory(GsonConverterFactory.create()).build()
     private val btcApi = retrofit.create(RetrofitFinMarketApi::class.java)
 
-    override fun exchangeName(): String = "Bitfinex"
+    override fun exchangeName(): String = exchangeName
 
     override fun getTicker(): Result<Ticker.CryptoTicker, Exception> {
-        val call = btcApi.getBitfinexTicker()
+        val call = btcApi.getBinanceTicker()
         val tickers: Ticker.CryptoTicker?
 
         try {
             val response = call.execute()
             if (response.isSuccessful) {
-                tickers = extractTickers(response.body())
+                tickers = if (response.body() != null) Ticker.CryptoTicker(
+                    response.body()!!.price,
+                    "tBTCUSD",
+                    exchangeName()
+                ) else null
             } else {
                 return Failure(Exception("${exchangeName()} call failed ${response.code()}"))
             }
@@ -42,13 +50,5 @@ class BitfinexExchange : CryptoExchange {
         }
 
         return Success(tickers)
-    }
-
-    //Values on https://docs.bitfinex.com/v2/reference#rest-public-tickers
-    private fun extractTickers(result: Array<Double>?): Ticker.CryptoTicker? {
-        result?.let {
-            return Ticker.CryptoTicker(result[ASK], "tBTCUSD", exchangeName())
-        }
-        return null
     }
 }

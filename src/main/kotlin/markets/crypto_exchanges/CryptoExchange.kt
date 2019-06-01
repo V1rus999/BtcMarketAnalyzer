@@ -12,5 +12,4 @@ interface CryptoExchange {
     fun exchangeName() : String
 
     fun getTicker(): Result<Ticker.CryptoTicker, Exception>
-
 }

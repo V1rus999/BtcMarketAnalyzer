@@ -1,3 +1,5 @@
+package streaming
+
 import markets.Ticker
 import markets.crypto_exchanges.CryptoExchange
 import network.Failure
@@ -7,7 +9,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.awt.MouseInfo
-
 
 /**
  * Created by johannesC on 2017/09/03.

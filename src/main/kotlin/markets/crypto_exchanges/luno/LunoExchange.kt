@@ -15,12 +15,16 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 class LunoExchange : CryptoExchange {
 
+    companion object {
+        const val exchangeName = "LunoSA"
+    }
+
     private val requestUrl = HttpUrl.parse("https://api.mybitx.com/")
     private val retrofit =
         Retrofit.Builder().baseUrl(requestUrl!!).addConverterFactory(GsonConverterFactory.create()).build()
     private val btcApi = retrofit.create(RetrofitFinMarketApi::class.java)
 
-    override fun exchangeName(): String = "LunoSA"
+    override fun exchangeName(): String = exchangeName
 
     override fun getTicker(): Result<Ticker.CryptoTicker, Exception> {
         val call = btcApi.getLunoTicker()
@@ -45,6 +49,10 @@ class LunoExchange : CryptoExchange {
 
     private fun extractTickers(result: LunoTicker?): Ticker.CryptoTicker? =
         result?.let {
-            Ticker.CryptoTicker(result.ask, "btczar", exchangeName())
+            Ticker.CryptoTicker(
+                result.lastTrade ?: result.ask,
+                "btczar",
+                exchangeName()
+            )
         }
 }
