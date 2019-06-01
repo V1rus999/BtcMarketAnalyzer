@@ -30,10 +30,12 @@ class PairTickerStreamingService(
         scheduler = Executors.newSingleThreadScheduledExecutor()
         scheduler?.scheduleAtFixedRate({
             val timeStamp = System.currentTimeMillis()
+            Logger.info("Starting ticker download for timestamp $timeStamp")
+
             val firstResult = getExchangeResult(firstExchange)
             val secondResult = getExchangeResult(secondExchange)
             tickerManager.newTickerResultReceived(timeStamp, firstResult, secondResult)
-            Logger.info("Done for $timeStamp, rescheduling next run for $time $timeUnit ")
+            Logger.info("Done for timestamp $timeStamp, rescheduling next run for $time $timeUnit ")
 
             if (withMouseMovementBot) {
                 val pObj = MouseInfo.getPointerInfo().location
