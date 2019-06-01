@@ -1,23 +1,22 @@
 package tickerHandling
 
-import markets.Ticker
 import java.util.*
 
 /**
  * @Author: JohannesC
  * @Date: 2019-06-01, Sat
  **/
-class InMemoryQueue {
+class InMemoryQueue<T> {
 
-    private val queue: Deque<Ticker.TrackedTicker> = LinkedList()
+    private val queue: Deque<T> = LinkedList()
 
-    fun enqueue(ticker: Ticker.TrackedTicker) {
-        queue.add(ticker)
+    fun enqueue(item: T) {
+        queue.add(item)
     }
 
-    fun dequeue(ticker: Ticker.TrackedTicker) = queue.poll()
+    fun dequeue() : T? = queue.poll()
 
-    fun peekLastValue() = queue.peekLast()
+    fun peekLastValue() : T? = queue.peekLast()
 
     fun checkSize() = queue.size
 }
