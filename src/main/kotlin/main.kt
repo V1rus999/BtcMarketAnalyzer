@@ -1,5 +1,5 @@
 import markets.ExchangeFactory
-import markets.crypto_exchanges.bitfinex.BitfinexExchange
+import markets.crypto_exchanges.binance.BinanceExchange
 import markets.crypto_exchanges.luno.LunoExchange
 import streaming.PairTickerStreamingService
 import java.io.BufferedReader
@@ -11,8 +11,8 @@ fun main(args: Array<String>) {
     val exchangeFactory = ExchangeFactory()
     val service = PairTickerStreamingService(
         exchangeFactory.getExchange(LunoExchange.exchangeName),
-        exchangeFactory.getExchange(BitfinexExchange.exchangeName),
-        BitfinexLunoQueueManager()
+        exchangeFactory.getExchange(BinanceExchange.exchangeName),
+        BinanceLunoQueueManager()
     )
     println("Starting ${PairTickerStreamingService::class}")
     service.startDownloadingTickerData()

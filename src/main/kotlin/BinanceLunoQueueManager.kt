@@ -6,7 +6,7 @@ import tickerHandling.QueueManager
  * @Author: JohannesC
  * @Date: 2019-06-01, Sat
  **/
-class BitfinexLunoQueueManager : QueueManager {
+class BinanceLunoQueueManager : QueueManager {
 
     private val queue = InMemoryQueue()
 
@@ -15,7 +15,7 @@ class BitfinexLunoQueueManager : QueueManager {
         firstTicker: Ticker.CryptoTicker?,
         secondTicker: Ticker.CryptoTicker?
     ) {
-        //We will assume the first value is luno and second is bitfinex
+        //We will assume the first value is luno and second is binance
         if (firstTicker == null || secondTicker == null) {
             return
         }
@@ -34,25 +34,25 @@ class BitfinexLunoQueueManager : QueueManager {
         val lastItemInQueue = queue.peekLastValue()
         val lunoTicker = Ticker.TickerTypes.LunoTicker(
             getPriceIncreasePercentage(
-                lastItemInQueue.cryptoPair.first.ticker,
+                lastItemInQueue?.cryptoPair?.first?.ticker,
                 firstTicker
             ), firstTicker
         )
 
-        val bitfinexTicker = Ticker.TickerTypes.BitfinexTicker(
+        val binanceTicker = Ticker.TickerTypes.BinanceTicker(
             getPriceIncreasePercentage(
-                lastItemInQueue.cryptoPair.first.ticker,
+                lastItemInQueue?.cryptoPair?.second?.ticker,
                 secondTicker
             ), secondTicker
         )
 
-        return Ticker.TrackedTicker(timeStamp, Pair(lunoTicker, bitfinexTicker))
+        return Ticker.TrackedTicker(timeStamp, Pair(lunoTicker, binanceTicker))
     }
 
     private fun getPriceIncreasePercentage(lastValue: Ticker.CryptoTicker?, ticker: Ticker.CryptoTicker): Double {
         if (lastValue == null) return 0.0
         val lastPrice = lastValue.price
         val newPrice = ticker.price
-        return (newPrice - lastPrice) / lastPrice * 100
+        return ((newPrice - lastPrice) / lastPrice) * 100
     }
 }

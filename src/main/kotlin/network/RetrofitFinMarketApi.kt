@@ -1,6 +1,7 @@
 package network
 
 import markets.Ticker
+import markets.crypto_exchanges.binance.BinanceTicker
 import markets.crypto_exchanges.bittrex.BittrexTicker
 import retrofit2.http.GET
 import markets.crypto_exchanges.luno.LunoTicker
@@ -20,7 +21,7 @@ interface RetrofitFinMarketApi {
     @GET("api/v1.1/public/getmarketsummaries")
     fun getBittrexTicker(): Call<BittrexTicker.BittrexResult>
 
-    @GET("v2/ticker/tBTCUSD")
-    fun getBitfinexTicker(): Call<Array<Double>>
+    @GET("api/v3/ticker/price?symbol=BTCUSDT")
+    fun getBinanceTicker(): Call<BinanceTicker>
 
 }

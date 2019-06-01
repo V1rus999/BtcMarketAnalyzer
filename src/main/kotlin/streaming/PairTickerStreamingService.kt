@@ -22,6 +22,8 @@ class PairTickerStreamingService(
 
     private var scheduler: ScheduledExecutorService? = null
     private val robot = Robot()
+    private val time: Long = 30
+    private val timeUnit = TimeUnit.SECONDS
 
     fun startDownloadingTickerData() {
         scheduler = Executors.newSingleThreadScheduledExecutor()
@@ -34,7 +36,8 @@ class PairTickerStreamingService(
             val pObj = MouseInfo.getPointerInfo().location
             robot.mouseMove(pObj.x + 1, pObj.y + 1)
             robot.mouseMove(pObj.x - 1, pObj.y - 1)
-        }, 0, 1, TimeUnit.MINUTES)
+            println("Done for $timeStamp, rescheduling next run for $time $timeUnit ")
+        }, 0, time, timeUnit)
     }
 
     private fun getExchangeResult(exchange: CryptoExchange): Ticker.CryptoTicker? =

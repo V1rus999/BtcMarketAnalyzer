@@ -15,12 +15,12 @@ class Ticker {
 
     sealed class TickerTypes {
         data class LunoTicker(val increaseFromPrevious: Double, val ticker: CryptoTicker) : TickerTypes()
-        data class BitfinexTicker(val increaseFromPrevious: Double, val ticker: CryptoTicker) : TickerTypes()
+        data class BinanceTicker(val increaseFromPrevious: Double, val ticker: CryptoTicker) : TickerTypes()
     }
 
     data class TrackedTicker(
         val timestamp: Long,
-        val cryptoPair: Pair<TickerTypes.LunoTicker, TickerTypes.BitfinexTicker>
+        val cryptoPair: Pair<TickerTypes.LunoTicker, TickerTypes.BinanceTicker>
     )
 
     data class OutputCryptoTicker(

@@ -49,6 +49,10 @@ class LunoExchange : CryptoExchange {
 
     private fun extractTickers(result: LunoTicker?): Ticker.CryptoTicker? =
         result?.let {
-            Ticker.CryptoTicker(result.ask, "btczar", exchangeName())
+            Ticker.CryptoTicker(
+                result.lastTrade ?: result.ask,
+                "btczar",
+                exchangeName()
+            )
         }
 }
