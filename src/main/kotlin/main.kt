@@ -59,7 +59,7 @@ fun retrieveOutputFile(): File {
 fun setupLogging(date: String) {
     val logLocation = "logging/${date}log.txt"
     try {
-        Configurator.defaultConfig().writer(FileWriter(logLocation)).activate()
+        Configurator.defaultConfig().writer(FileWriter(logLocation)).addWriter(ConsoleWriter()).activate()
         Logger.info("Successfully set up logging at $logLocation")
     } catch (e: Exception) {
         println("Error setting up logging $e")
