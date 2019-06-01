@@ -7,7 +7,7 @@ import org.pmw.tinylog.writers.ConsoleWriter
 import org.pmw.tinylog.writers.FileWriter
 import persistance.GsonObjectWriter
 import streaming.PairTickerStreamingService
-import tickerHandling.BinanceLunoTickerManager
+import tickerHandling.LunoBinanceTickerManager
 import tickerHandling.InMemoryQueue
 import java.io.BufferedReader
 import java.io.File
@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
     val service = PairTickerStreamingService(
         exchangeFactory.getExchange(LunoExchange.exchangeName),
         exchangeFactory.getExchange(BinanceExchange.exchangeName),
-        BinanceLunoTickerManager(GsonObjectWriter(::retrieveOutputFile), InMemoryQueue())
+        LunoBinanceTickerManager(GsonObjectWriter(::retrieveOutputFile), InMemoryQueue())
     )
     Logger.info("Starting ${PairTickerStreamingService::class}")
     service.startDownloadingTickerData()

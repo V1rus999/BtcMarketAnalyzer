@@ -10,12 +10,12 @@ import java.lang.Exception
  * @Author: JohannesC
  * @Date: 2019-06-01, Sat
  **/
-class BinanceLunoTickerManager(
+class LunoBinanceTickerManager(
     private val writer: ObjectWriter<Ticker.TrackedTicker>,
     private val queue: InMemoryQueue<Ticker.TrackedTicker>
 ) : TickerManager {
 
-    private val QUEUE_FLUSH_LIMIT = 30
+    private val QUEUE_FLUSH_LIMIT = 6
 
     override fun newTickerResultReceived(
         timeStamp: Long,
