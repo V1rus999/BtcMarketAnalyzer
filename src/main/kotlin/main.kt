@@ -23,12 +23,6 @@ fun main(args: Array<String>) {
     val date = current.format(formatter)
     setupLogging(date)
 
-    val outputFile = File("tickerData/${date}Ticker.json")
-    if (!outputFile.parentFile.exists()) {
-        outputFile.parentFile.mkdir()
-    }
-    Logger.info("Created output file at ${outputFile.absolutePath}")
-
     val exchangeFactory = ExchangeFactory()
     val service = PairTickerStreamingService(
         exchangeFactory.getExchange(LunoExchange.exchangeName),
