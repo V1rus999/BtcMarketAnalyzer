@@ -35,7 +35,7 @@ class LunoExchange : CryptoExchange {
         try {
             val response = call.execute()
             if (response.isSuccessful) {
-                Logger.debug("Got data from $exchangeName", response.body())
+                Logger.debug("Got data from ${BinanceExchange.exchangeName} ${response.body()}")
                 tickers = extractTickers(response.body())
             } else {
                 return Failure(Exception("${exchangeName()} call failed ${response.code()}"))

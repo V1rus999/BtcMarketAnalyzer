@@ -32,7 +32,7 @@ class BinanceExchange : CryptoExchange {
         try {
             val response = call.execute()
             if (response.isSuccessful) {
-                Logger.debug("Got data from $exchangeName", response.body())
+                Logger.debug("Got data from $exchangeName ${response.body()}")
                 tickers = if (response.body() != null) Ticker.CryptoTicker(
                     response.body()!!.price,
                     "tBTCUSD",

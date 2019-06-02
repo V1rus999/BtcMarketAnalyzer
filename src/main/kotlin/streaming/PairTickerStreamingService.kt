@@ -50,7 +50,7 @@ class PairTickerStreamingService(
     private fun getExchangeResult(exchange: CryptoExchange): Ticker.CryptoTicker? =
         when (val result = exchange.getTicker()) {
             is Success -> {
-                Logger.info("Got results from ${exchange.exchangeName()}", result.value)
+                Logger.info("Got results from ${exchange.exchangeName()} ${result.value}")
                 result.value
             }
             is Failure -> {

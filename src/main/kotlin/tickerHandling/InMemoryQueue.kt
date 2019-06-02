@@ -16,8 +16,6 @@ class InMemoryQueue<T> {
 
     fun dequeue(): T? = queue.poll()
 
-    fun peekQueue(): T? = queue.peek()
-
     fun peekLastValue(): T? = queue.peekLast()
 
     fun checkSize() = queue.size
