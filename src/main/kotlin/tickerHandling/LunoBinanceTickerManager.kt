@@ -47,7 +47,7 @@ class LunoBinanceTickerManager(
             queue.dequeue()
         } else {
             Logger.info("Queue size below $QUEUE_FLUSH_LIMIT. Peeking queue only")
-            queue.peekQueue()
+            queue.peekLastValue()
         }
         if (item != null) {
             Logger.info("Item found in queue, writing to file")
