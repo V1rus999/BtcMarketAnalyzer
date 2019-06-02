@@ -61,7 +61,7 @@ class PairTickerStreamingService(
 
     private fun getTimeStampNow(): String {
         val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_hh-mm-ss")
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")
         return current.format(formatter)
     }
 
