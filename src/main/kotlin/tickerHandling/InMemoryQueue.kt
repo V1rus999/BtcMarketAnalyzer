@@ -14,11 +14,11 @@ class InMemoryQueue<T> {
         queue.add(item)
     }
 
-    fun dequeue() : T? = queue.poll()
+    fun dequeue(): T? = queue.poll()
 
-    fun peekQueue() : T? = queue.peek()
+    fun peekQueue(): T? = queue.peek()
 
-    fun peekLastValue() : T? = queue.peekLast()
+    fun peekLastValue(): T? = queue.peekLast()
 
     fun checkSize() = queue.size
 }

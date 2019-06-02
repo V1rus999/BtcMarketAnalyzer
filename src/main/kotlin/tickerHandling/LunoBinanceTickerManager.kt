@@ -44,10 +44,11 @@ class LunoBinanceTickerManager(
     private fun flushQueueToFile(queue: InMemoryQueue<Ticker.TrackedTicker>) {
         val item = if (queue.checkSize() > QUEUE_FLUSH_LIMIT) {
             Logger.info("Queue size above $QUEUE_FLUSH_LIMIT. Flushing item now")
-            queue.dequeue()}
-        else {
+            queue.dequeue()
+        } else {
             Logger.info("Queue size below $QUEUE_FLUSH_LIMIT. Peeking queue only")
-            queue.peekQueue()}
+            queue.peekQueue()
+        }
         if (item != null) {
             Logger.info("Item found in queue, writing to file")
             writer.writeObject(item)
