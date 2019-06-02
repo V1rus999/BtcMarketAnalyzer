@@ -9,7 +9,7 @@ import markets.Ticker
 interface TickerManager {
 
     fun newTickerResultReceived(
-        timeStamp: Long,
+        timeStamp: String,
         firstTicker: Ticker.CryptoTicker?,
         secondTicker: Ticker.CryptoTicker?
     )

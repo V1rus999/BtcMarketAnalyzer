@@ -19,7 +19,7 @@ class Ticker {
     }
 
     data class TrackedTicker(
-        val timestamp: Long,
+        val timestamp: String,
         val cryptoPair: Pair<TickerTypes.LunoTicker, TickerTypes.BinanceTicker>
     )
 

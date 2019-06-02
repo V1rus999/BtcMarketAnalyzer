@@ -15,10 +15,10 @@ class LunoBinanceTickerManager(
     private val queue: InMemoryQueue<Ticker.TrackedTicker>
 ) : TickerManager {
 
-    private val QUEUE_FLUSH_LIMIT = 6
+    private val QUEUE_FLUSH_LIMIT = 1
 
     override fun newTickerResultReceived(
-        timeStamp: Long,
+        timeStamp: String,
         firstTicker: Ticker.CryptoTicker?,
         secondTicker: Ticker.CryptoTicker?
     ) {
@@ -51,7 +51,7 @@ class LunoBinanceTickerManager(
     }
 
     private fun generateTrackedTickerForTimestamp(
-        timeStamp: Long,
+        timeStamp: String,
         firstTicker: Ticker.CryptoTicker,
         secondTicker: Ticker.CryptoTicker,
         lastItemInQueue: Ticker.TrackedTicker?

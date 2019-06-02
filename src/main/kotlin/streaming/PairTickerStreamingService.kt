@@ -11,6 +11,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.awt.MouseInfo
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Created by johannesC on 2017/09/03.
@@ -29,7 +31,7 @@ class PairTickerStreamingService(
     fun startDownloadingTickerData(withMouseMovementBot: Boolean = false) {
         scheduler = Executors.newSingleThreadScheduledExecutor()
         scheduler?.scheduleAtFixedRate({
-            val timeStamp = System.currentTimeMillis()
+            val timeStamp = getTimeStampNow()
             Logger.info("Starting ticker download for timestamp $timeStamp")
 
             val firstResult = getExchangeResult(firstExchange)
@@ -56,6 +58,12 @@ class PairTickerStreamingService(
                 null
             }
         }
+
+    private fun getTimeStampNow(): String {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_hh-mm-ss")
+        return current.format(formatter)
+    }
 
     fun stopDownloadingTickerData() {
         scheduler?.shutdown()
