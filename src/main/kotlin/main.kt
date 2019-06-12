@@ -33,7 +33,7 @@ object Main {
             LunoBinanceTickerManager(GsonObjectWriter(::retrieveOutputFile), InMemoryQueue())
         )
         Logger.info("Starting ${PairTickerStreamingService::class}")
-        service.startDownloadingTickerData(true)
+        service.startDownloadingTickerData()
 
         val `in` = BufferedReader(InputStreamReader(System.`in`))
         val a = `in`.readLine()

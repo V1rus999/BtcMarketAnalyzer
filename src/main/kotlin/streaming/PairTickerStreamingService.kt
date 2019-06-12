@@ -6,11 +6,9 @@ import network.Failure
 import network.Success
 import org.pmw.tinylog.Logger
 import tickerHandling.TickerManager
-import java.awt.Robot
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
-import java.awt.MouseInfo
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -24,11 +22,10 @@ class PairTickerStreamingService(
 ) {
 
     private var scheduler: ScheduledExecutorService? = null
-    private val robot = Robot()
-    private val time: Long = 15
+    private val time: Long = 1
     private val timeUnit = TimeUnit.MINUTES
 
-    fun startDownloadingTickerData(withMouseMovementBot: Boolean = false) {
+    fun startDownloadingTickerData() {
         scheduler = Executors.newSingleThreadScheduledExecutor()
         scheduler?.scheduleAtFixedRate({
             val timeStamp = getTimeStampNow()
@@ -38,12 +35,6 @@ class PairTickerStreamingService(
             val secondResult = getExchangeResult(secondExchange)
             tickerManager.newTickerResultReceived(timeStamp, firstResult, secondResult)
             Logger.info("Done for timestamp $timeStamp, rescheduling next run for $time $timeUnit ")
-
-            if (withMouseMovementBot) {
-                val pObj = MouseInfo.getPointerInfo().location
-                robot.mouseMove(pObj.x + 1, pObj.y + 1)
-                robot.mouseMove(pObj.x - 1, pObj.y - 1)
-            }
         }, 0, time, timeUnit)
     }
 
