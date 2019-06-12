@@ -15,53 +15,57 @@ import java.io.InputStreamReader
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-fun main(args: Array<String>) {
-    println("Starting...")
+object Main {
 
-    val current = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val date = current.format(formatter)
-    setupLogging(date)
+    @JvmStatic
+    fun main(args: Array<String>) {
+        println("Starting...")
 
-    val exchangeFactory = ExchangeFactory()
-    val service = PairTickerStreamingService(
-        exchangeFactory.getExchange(LunoExchange.exchangeName),
-        exchangeFactory.getExchange(BinanceExchange.exchangeName),
-        LunoBinanceTickerManager(GsonObjectWriter(::retrieveOutputFile), InMemoryQueue())
-    )
-    Logger.info("Starting ${PairTickerStreamingService::class}")
-    service.startDownloadingTickerData()
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val date = current.format(formatter)
+        setupLogging(date)
 
-    val `in` = BufferedReader(InputStreamReader(System.`in`))
-    val a = `in`.readLine()
-    if (a == "1") {
-        Logger.info("Stopping Service...")
-        service.stopDownloadingTickerData()
-        Logger.info("Quitting...")
-    }
-}
+        val exchangeFactory = ExchangeFactory()
+        val service = PairTickerStreamingService(
+            exchangeFactory.getExchange(LunoExchange.exchangeName),
+            exchangeFactory.getExchange(BinanceExchange.exchangeName),
+            LunoBinanceTickerManager(GsonObjectWriter(::retrieveOutputFile), InMemoryQueue())
+        )
+        Logger.info("Starting ${PairTickerStreamingService::class}")
+        service.startDownloadingTickerData(true)
 
-fun retrieveOutputFile(): File {
-    val current = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val date = current.format(formatter)
-
-    val outputFile = File("tickerData/${date}Ticker.json")
-    if (!outputFile.parentFile.exists()) {
-        outputFile.parentFile.mkdir()
+        val `in` = BufferedReader(InputStreamReader(System.`in`))
+        val a = `in`.readLine()
+        if (a == "1") {
+            Logger.info("Stopping Service...")
+            service.stopDownloadingTickerData()
+            Logger.info("Quitting...")
+        }
     }
 
-    if (!outputFile.exists())
-        Logger.info("Created output file at ${outputFile.absolutePath}")
-    return outputFile
-}
+    private fun retrieveOutputFile(): File {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val date = current.format(formatter)
 
-fun setupLogging(date: String) {
-    val logLocation = "logging/${date}log.txt"
-    try {
-        Configurator.defaultConfig().writer(FileWriter(logLocation)).addWriter(ConsoleWriter()).activate()
-        Logger.info("Successfully set up logging at $logLocation")
-    } catch (e: Exception) {
-        println("Error setting up logging $e")
+        val outputFile = File("tickerData/${date}Ticker.json")
+        if (!outputFile.parentFile.exists()) {
+            outputFile.parentFile.mkdir()
+        }
+
+        if (!outputFile.exists())
+            Logger.info("Created output file at ${outputFile.absolutePath}")
+        return outputFile
+    }
+
+    private fun setupLogging(date: String) {
+        val logLocation = "logging/${date}log.txt"
+        try {
+            Configurator.defaultConfig().writer(FileWriter(logLocation)).addWriter(ConsoleWriter()).activate()
+            Logger.info("Successfully set up logging at $logLocation")
+        } catch (e: Exception) {
+            println("Error setting up logging $e")
+        }
     }
 }

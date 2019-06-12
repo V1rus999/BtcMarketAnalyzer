@@ -25,7 +25,7 @@ class PairTickerStreamingService(
 
     private var scheduler: ScheduledExecutorService? = null
     private val robot = Robot()
-    private val time: Long = 5
+    private val time: Long = 15
     private val timeUnit = TimeUnit.MINUTES
 
     fun startDownloadingTickerData(withMouseMovementBot: Boolean = false) {
