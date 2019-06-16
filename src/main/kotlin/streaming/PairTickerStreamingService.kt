@@ -11,6 +11,8 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.concurrent.fixedRateTimer
 
 /**
  * Created by johannesC on 2017/09/03.
@@ -21,21 +23,19 @@ class PairTickerStreamingService(
     private val tickerManager: TickerManager
 ) {
 
-    private var scheduler: ScheduledExecutorService? = null
-    private val time: Long = 1
-    private val timeUnit = TimeUnit.MINUTES
+    private val time: Long = 1L.toMinutes()
+    private var timer : Timer? = null
 
     fun startDownloadingTickerData() {
-        scheduler = Executors.newSingleThreadScheduledExecutor()
-        scheduler?.scheduleAtFixedRate({
+        timer = fixedRateTimer("PairTickerStreamingServiceThread", false, 0L, period = time){
             val timeStamp = getTimeStampNow()
             Logger.info("Starting ticker download for timestamp $timeStamp")
 
             val firstResult = getExchangeResult(firstExchange)
             val secondResult = getExchangeResult(secondExchange)
             tickerManager.newTickerResultReceived(timeStamp, firstResult, secondResult)
-            Logger.info("Done for timestamp $timeStamp, rescheduling next run for $time $timeUnit ")
-        }, 0, time, timeUnit)
+            Logger.info("Done for timestamp $timeStamp, rescheduling next run for $time milliseconds ")
+        }
     }
 
     private fun getExchangeResult(exchange: CryptoExchange): Ticker.CryptoTicker? =
@@ -57,6 +57,8 @@ class PairTickerStreamingService(
     }
 
     fun stopDownloadingTickerData() {
-        scheduler?.shutdown()
+        timer?.cancel()
     }
+
+    private fun Long.toMinutes() : Long = 1000 * this * 60
 }

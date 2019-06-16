@@ -20,6 +20,7 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         println("Starting...")
+        println("Press 1 and enter to quit")
 
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
