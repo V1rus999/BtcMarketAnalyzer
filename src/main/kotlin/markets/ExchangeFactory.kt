@@ -1,6 +1,6 @@
 package markets
 
-import markets.crypto_exchanges.CryptoExchange
+import markets.crypto_exchanges.Exchange
 import markets.crypto_exchanges.binance.BinanceExchange
 import markets.crypto_exchanges.luno.LunoExchange
 
@@ -9,13 +9,13 @@ import markets.crypto_exchanges.luno.LunoExchange
  */
 class ExchangeFactory {
 
-    fun getExchange(name : String) : CryptoExchange = when(name) {
+    fun getExchange(name : String) : Exchange = when(name) {
         LunoExchange.exchangeName -> LunoExchange()
         BinanceExchange.exchangeName -> BinanceExchange()
         else -> throw Exception("Unsupported exchange")
     }
 
-    fun getExchanges(): List<CryptoExchange> {
+    fun getExchanges(): List<Exchange> {
         return arrayListOf(
             LunoExchange(),
             BinanceExchange()

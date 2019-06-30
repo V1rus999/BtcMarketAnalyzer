@@ -1,7 +1,7 @@
 package markets.crypto_exchanges.bittrex
 
 import markets.Ticker
-import markets.crypto_exchanges.CryptoExchange
+import markets.crypto_exchanges.Exchange
 import network.Failure
 import network.Result
 import okhttp3.HttpUrl
@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 /**
  * Created by johannesC on 2017/09/09.
  */
-class BittrexExchange : CryptoExchange {
+class BittrexExchange : Exchange {
 
     private val requestUrl = HttpUrl.parse("https://bittrex.com/")
     private val retrofit =
@@ -22,9 +22,9 @@ class BittrexExchange : CryptoExchange {
 
     override fun exchangeName(): String = "Bittrex"
 
-    override fun getTicker(): Result<Ticker.CryptoTicker, java.lang.Exception> {
+    override fun getTicker(): Result<Ticker.BasicTicker, java.lang.Exception> {
         val call = btcApi.getBittrexTicker()
-        val tickers: Ticker.CryptoTicker?
+        val tickers: Ticker.BasicTicker?
 
         try {
             val response = call.execute()
@@ -43,11 +43,11 @@ class BittrexExchange : CryptoExchange {
         return Success(tickers)
     }
 
-    private fun extractTickers(result: BittrexTicker.BittrexResult?): Ticker.CryptoTicker? {
-        val cryptoTickers: List<Ticker.CryptoTicker>? = result?.result?.mapNotNull {
+    private fun extractTickers(result: BittrexTicker.BittrexResult?): Ticker.BasicTicker? {
+        val basicTickers: List<Ticker.BasicTicker>? = result?.result?.mapNotNull {
             val pair = it.MarketName?.toLowerCase()?.replace("-", "")
             if (pair != null) {
-                Ticker.CryptoTicker(it.Last, pair, exchangeName())
+                Ticker.BasicTicker(it.Last, pair, exchangeName())
             } else {
                 null
             }

@@ -7,9 +7,9 @@ import java.lang.Exception
 /**
  * Created by johannesC on 2017/09/03.
  */
-interface CryptoExchange {
+interface Exchange {
 
     fun exchangeName() : String
 
-    fun getTicker(): Result<Ticker.CryptoTicker, Exception>
+    fun getTicker(): Result<Ticker.BasicTicker, Exception>
 }

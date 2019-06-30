@@ -1,7 +1,7 @@
 package markets.crypto_exchanges.binance
 
 import markets.Ticker
-import markets.crypto_exchanges.CryptoExchange
+import markets.crypto_exchanges.Exchange
 import network.Failure
 import network.Result
 import network.RetrofitFinMarketApi
@@ -12,7 +12,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 
-class BinanceExchange : CryptoExchange {
+class BinanceExchange : Exchange {
 
     companion object {
         const val exchangeName = "Binance"
@@ -25,15 +25,15 @@ class BinanceExchange : CryptoExchange {
 
     override fun exchangeName(): String = exchangeName
 
-    override fun getTicker(): Result<Ticker.CryptoTicker, Exception> {
+    override fun getTicker(): Result<Ticker.BasicTicker, Exception> {
         val call = btcApi.getBinanceTicker()
-        val tickers: Ticker.CryptoTicker?
+        val tickers: Ticker.BasicTicker?
 
         try {
             val response = call.execute()
             if (response.isSuccessful) {
                 Logger.debug("Got data from $exchangeName ${response.body()}")
-                tickers = if (response.body() != null) Ticker.CryptoTicker(
+                tickers = if (response.body() != null) Ticker.BasicTicker(
                     response.body()!!.price,
                     "tBTCUSD",
                     exchangeName()

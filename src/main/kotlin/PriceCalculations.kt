@@ -5,7 +5,7 @@
 object PriceCalculations {
 
     fun getPriceChangePercentage(lastValue: Double, newValue: Double): Double =
-        if (lastValue == 0.0) lastValue
+        if (lastValue == 0.000) lastValue
         else ((newValue - lastValue) / lastValue) * 100.0
 
 }

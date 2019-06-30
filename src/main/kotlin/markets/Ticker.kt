@@ -7,15 +7,21 @@ import java.util.*
  */
 class Ticker {
 
-    data class CryptoTicker(
+    data class BasicTicker(
         val price: Double,
         val pair: String,
         val exchange: String
     )
 
+    data class OutputTicker(val timestamp: String, val tickers: List<PriceMovementWrappedTicker>)
+    data class PriceMovementWrappedTicker(
+        val priceMovement: Double,
+        val ticker: BasicTicker
+    )
+
     sealed class TickerTypes {
-        data class LunoTicker(val priceMovement: Double, val ticker: CryptoTicker) : TickerTypes()
-        data class BinanceTicker(val priceMovement: Double, val ticker: CryptoTicker) : TickerTypes()
+        data class LunoTicker(val priceMovement: Double, val ticker: BasicTicker) : TickerTypes()
+        data class BinanceTicker(val priceMovement: Double, val ticker: BasicTicker) : TickerTypes()
     }
 
     data class TrackedTicker(
@@ -25,7 +31,7 @@ class Ticker {
 
     data class OutputCryptoTicker(
         val timeStamp: String? = Calendar.getInstance().time.toString(),
-        val cryptoTickers: ArrayList<CryptoTicker> = arrayListOf(),
+        val basicTickers: ArrayList<BasicTicker> = arrayListOf(),
         val zar: String = "",
         val eur: String = ""
     )
