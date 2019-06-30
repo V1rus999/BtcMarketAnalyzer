@@ -34,7 +34,7 @@ object Main {
                 exchangeFactory.getExchange(BinanceExchange.exchangeName)
             ),
             InMemoryQueue(),
-            GsonObjectWriter(::retrieveOutputFile)
+            GsonObjectWriter(::retrieveOutputFile, "${LunoExchange.exchangeName}${BinanceExchange.exchangeName}")
         )
         lunoBinanceService.startDownloadingTickerData()
 
@@ -47,12 +47,12 @@ object Main {
         }
     }
 
-    private fun retrieveOutputFile(): File {
+    private fun retrieveOutputFile(additionalFileNameInfo: String): File {
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val date = current.format(formatter)
 
-        val outputFile = File("tickerData/${date}Ticker.json")
+        val outputFile = File("tickerData/${date}TickerFor$additionalFileNameInfo.json")
         if (!outputFile.parentFile.exists()) {
             outputFile.parentFile.mkdir()
         }
