@@ -14,11 +14,4 @@ class ExchangeFactory {
         BinanceExchange.exchangeName -> BinanceExchange()
         else -> throw Exception("Unsupported exchange")
     }
-
-    fun getExchanges(): List<Exchange> {
-        return arrayListOf(
-            LunoExchange(),
-            BinanceExchange()
-        )
-    }
 }
