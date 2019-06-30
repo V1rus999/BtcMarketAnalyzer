@@ -1,7 +1,11 @@
 package persistance
 
 import com.google.gson.Gson
+import helpers.Failure
+import helpers.Result
+import helpers.Success
 import java.io.File
+import kotlin.Exception
 
 /**
  * @Author: johannesC
@@ -11,10 +15,15 @@ class GsonObjectWriter<T>(private val fileRetriever: () -> File) : ObjectWriter<
 
     private val gson = Gson()
 
-    override fun writeObject(value: T) {
-        val gsonedString = gson.toJson(value)
-        val file = fileRetriever.invoke()
-        file.appendText(gsonedString)
-        file.appendText("\n")
+    override fun writeObject(value: T): Result<Unit, Exception> {
+        return try {
+            val gsonedString = gson.toJson(value)
+            val file = fileRetriever.invoke()
+            file.appendText(gsonedString)
+            file.appendText("\n")
+            Success(Unit)
+        } catch (e: Exception) {
+            Failure(e)
+        }
     }
 }

@@ -2,13 +2,12 @@ package streaming
 
 import markets.Ticker
 import markets.crypto_exchanges.Exchange
-import network.Failure
-import network.Success
+import helpers.Failure
+import helpers.Success
 import org.pmw.tinylog.Logger
 import persistance.ObjectWriter
 import tickerHandling.InMemoryQueue
 import tickerHandling.TickerTransformer
-import java.lang.Exception
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -26,44 +25,39 @@ class BulkTickerStream(
 
     private val time: Long = 1L.toMinutes()
     private var timer: Timer? = null
-    private val QUEUE_FLUSH_LIMIT = 6
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")
 
     override fun startDownloadingTickerData() {
         timer = fixedRateTimer("PairTickerStreamingServiceThread", false, 0L, period = time) {
             val timeStamp = getTimeStampNow()
             Logger.info("Starting ticker download for timestamp $timeStamp")
 
-            val results: List<Ticker.BasicTicker> = exchanges.mapNotNull {
-                getExchangeResult(it)
-            }
-
-            val outputTicker = TickerTransformer.transformTickers(timeStamp, results, queue.peekLastValue())
-            queue.enqueue(outputTicker)
-
-            try {
-                Logger.info("Flushing queue QUEUE_FLUSH_LIMIT $QUEUE_FLUSH_LIMIT")
-                flushQueueToFile(queue)
-            } catch (e: Exception) {
-                Logger.error(e, "Issue flushing queue")
-            }
+            val networkResults = getTickersFromExchanges()
+            val outputTicker = generateTickerForOutput(timeStamp, networkResults)
+            enqueueNewOutputTicker(outputTicker)
+            writeTickerToFile(outputTicker)
 
             Logger.info("Done for timestamp $timeStamp, rescheduling next run for $time milliseconds ")
         }
     }
 
-    private fun flushQueueToFile(queue: InMemoryQueue<Ticker.OutputTicker>) {
-        val item = queue.peekLastValue()
+    private fun getTickersFromExchanges(): List<Ticker.BasicTicker> = exchanges.mapNotNull {
+        getExchangeResult(it)
+    }
 
-        if (queue.checkSize() > QUEUE_FLUSH_LIMIT) {
-            Logger.info("Queue size above $QUEUE_FLUSH_LIMIT. Flushing item now")
-            queue.dequeue()
-        }
+    private fun generateTickerForOutput(
+        timeStamp: String,
+        networkResults: List<Ticker.BasicTicker>
+    ): Ticker.OutputTicker =
+        TickerTransformer.transformTickers(timeStamp, networkResults, queue.pollLastValue())
 
-        if (item != null) {
-            Logger.info("Item found in queue. Writing to file")
-            writer.writeObject(item)
-        } else {
-            Logger.info("No item found in queue")
+    private fun enqueueNewOutputTicker(ticker: Ticker.OutputTicker) {
+        queue.enqueue(ticker)
+    }
+
+    private fun writeTickerToFile(ticker: Ticker.OutputTicker) {
+        when (val result = writer.writeObject(ticker)) {
+            is Failure -> Logger.error(result.reason, "Issue flushing queue")
         }
     }
 
@@ -81,7 +75,6 @@ class BulkTickerStream(
 
     private fun getTimeStampNow(): String {
         val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")
         return current.format(formatter)
     }
 

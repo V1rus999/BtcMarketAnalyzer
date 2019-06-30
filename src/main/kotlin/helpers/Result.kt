@@ -1,4 +1,4 @@
-package network
+package helpers
 
 sealed class Result<out Success, out Failure>
 

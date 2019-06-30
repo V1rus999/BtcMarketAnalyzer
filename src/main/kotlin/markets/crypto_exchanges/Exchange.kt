@@ -1,7 +1,7 @@
 package markets.crypto_exchanges
 
 import markets.Ticker
-import network.Result
+import helpers.Result
 import java.lang.Exception
 
 /**

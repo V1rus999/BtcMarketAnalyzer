@@ -2,10 +2,10 @@ package markets.crypto_exchanges.binance
 
 import markets.Ticker
 import markets.crypto_exchanges.Exchange
-import network.Failure
-import network.Result
+import helpers.Failure
+import helpers.Result
 import network.RetrofitFinMarketApi
-import network.Success
+import helpers.Success
 import okhttp3.HttpUrl
 import org.pmw.tinylog.Logger
 import retrofit2.Retrofit

@@ -2,11 +2,11 @@ package markets.crypto_exchanges.bittrex
 
 import markets.Ticker
 import markets.crypto_exchanges.Exchange
-import network.Failure
-import network.Result
+import helpers.Failure
+import helpers.Result
 import okhttp3.HttpUrl
 import network.RetrofitFinMarketApi
-import network.Success
+import helpers.Success
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
