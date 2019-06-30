@@ -1,13 +1,13 @@
 package markets.crypto_exchanges.luno
 
 import markets.Ticker
-import markets.crypto_exchanges.CryptoExchange
+import markets.crypto_exchanges.Exchange
 import markets.crypto_exchanges.binance.BinanceExchange
-import network.Failure
-import network.Result
+import helpers.Failure
+import helpers.Result
 import okhttp3.HttpUrl
 import network.RetrofitFinMarketApi
-import network.Success
+import helpers.Success
 import org.pmw.tinylog.Logger
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 /**
  * Created by johannesC on 2017/09/03.
  */
-class LunoExchange : CryptoExchange {
+class LunoExchange : Exchange {
 
     companion object {
         const val exchangeName = "LunoSA"
@@ -28,9 +28,9 @@ class LunoExchange : CryptoExchange {
 
     override fun exchangeName(): String = exchangeName
 
-    override fun getTicker(): Result<Ticker.CryptoTicker, Exception> {
+    override fun getTicker(): Result<Ticker.BasicTicker, Exception> {
         val call = btcApi.getLunoTicker()
-        val tickers: Ticker.CryptoTicker?
+        val tickers: Ticker.BasicTicker?
 
         try {
             val response = call.execute()
@@ -50,9 +50,9 @@ class LunoExchange : CryptoExchange {
         return Success(tickers)
     }
 
-    private fun extractTickers(result: LunoTicker?): Ticker.CryptoTicker? =
+    private fun extractTickers(result: LunoTicker?): Ticker.BasicTicker? =
         result?.let {
-            Ticker.CryptoTicker(
+            Ticker.BasicTicker(
                 result.lastTrade ?: result.ask,
                 "btczar",
                 exchangeName()

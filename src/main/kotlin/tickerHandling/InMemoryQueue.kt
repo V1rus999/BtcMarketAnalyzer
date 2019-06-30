@@ -18,5 +18,7 @@ class InMemoryQueue<T> {
 
     fun peekLastValue(): T? = queue.peekLast()
 
+    fun pollLastValue() : T? = queue.pollLast()
+
     fun checkSize() = queue.size
 }

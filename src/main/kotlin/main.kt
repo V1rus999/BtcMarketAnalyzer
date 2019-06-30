@@ -6,8 +6,8 @@ import org.pmw.tinylog.Logger
 import org.pmw.tinylog.writers.ConsoleWriter
 import org.pmw.tinylog.writers.FileWriter
 import persistance.GsonObjectWriter
-import streaming.PairTickerStreamingService
-import tickerHandling.LunoBinanceTickerManager
+import streaming.BulkTickerStream
+import streaming.TickerStream
 import tickerHandling.InMemoryQueue
 import java.io.BufferedReader
 import java.io.File
@@ -28,29 +28,31 @@ object Main {
         setupLogging(date)
 
         val exchangeFactory = ExchangeFactory()
-        val service = PairTickerStreamingService(
-            exchangeFactory.getExchange(LunoExchange.exchangeName),
-            exchangeFactory.getExchange(BinanceExchange.exchangeName),
-            LunoBinanceTickerManager(GsonObjectWriter(::retrieveOutputFile), InMemoryQueue())
+        val lunoBinanceService: TickerStream = BulkTickerStream(
+            listOf(
+                exchangeFactory.getExchange(LunoExchange.exchangeName),
+                exchangeFactory.getExchange(BinanceExchange.exchangeName)
+            ),
+            InMemoryQueue(),
+            GsonObjectWriter(::retrieveOutputFile, "${LunoExchange.exchangeName}${BinanceExchange.exchangeName}")
         )
-        Logger.info("Starting ${PairTickerStreamingService::class}")
-        service.startDownloadingTickerData()
+        lunoBinanceService.startDownloadingTickerData()
 
         val `in` = BufferedReader(InputStreamReader(System.`in`))
         val a = `in`.readLine()
         if (a == "1") {
             Logger.info("Stopping Service...")
-            service.stopDownloadingTickerData()
+            lunoBinanceService.stopDownloadingTickerData()
             Logger.info("Quitting...")
         }
     }
 
-    private fun retrieveOutputFile(): File {
+    private fun retrieveOutputFile(additionalFileNameInfo: String): File {
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val date = current.format(formatter)
 
-        val outputFile = File("tickerData/${date}Ticker.json")
+        val outputFile = File("tickerData/${date}TickerFor$additionalFileNameInfo.json")
         if (!outputFile.parentFile.exists()) {
             outputFile.parentFile.mkdir()
         }
