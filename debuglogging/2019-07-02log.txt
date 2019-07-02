@@ -1,0 +1,10 @@
+2019-07-02 21:36:40 [main] Main.setupLogging()
+INFO: Successfully set up logging at debuglogging/2019-07-02log.txt
+2019-07-02 21:36:40 [DefaultDispatcher-worker-1] streaming.BulkTickerStream.invokeSuspend()
+INFO: Starting ticker download for timestamp 2019-07-02 09:36:40
+2019-07-02 21:36:41 [DefaultDispatcher-worker-1] streaming.BulkTickerStream.getExchangeResult()
+INFO: Got results from LunoSA BasicTicker(price=164985.0, pair=btczar, exchange=LunoSA)
+2019-07-02 21:36:42 [DefaultDispatcher-worker-1] streaming.BulkTickerStream.getExchangeResult()
+INFO: Got results from Binance BasicTicker(price=10837.53, pair=tBTCUSD, exchange=Binance)
+2019-07-02 21:36:42 [DefaultDispatcher-worker-1] streaming.BulkTickerStream.invokeSuspend()
+INFO: Done for timestamp 2019-07-02 09:36:40, rescheduling next run for 60000 milliseconds 

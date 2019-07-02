@@ -17,6 +17,8 @@ import java.time.format.DateTimeFormatter
 
 object Main {
 
+    private const val isDebugRun = true
+
     @JvmStatic
     fun main(args: Array<String>) {
         println("Starting...")
@@ -52,7 +54,9 @@ object Main {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val date = current.format(formatter)
 
-        val outputFile = File("tickerData/${date}TickerFor$additionalFileNameInfo.json")
+        val outputFile =
+            if (isDebugRun) File("debugtickerData/${date}TickerFor$additionalFileNameInfo.json")
+            else File("tickerData/${date}TickerFor$additionalFileNameInfo.json")
         if (!outputFile.parentFile.exists()) {
             outputFile.parentFile.mkdir()
         }
@@ -63,7 +67,7 @@ object Main {
     }
 
     private fun setupLogging(date: String) {
-        val logLocation = "logging/${date}log.txt"
+        val logLocation = if (isDebugRun) "debuglogging/${date}log.txt" else "logging/${date}log.txt"
         try {
             Configurator.defaultConfig().writer(FileWriter(logLocation)).addWriter(ConsoleWriter()).activate()
             Logger.info("Successfully set up logging at $logLocation")
