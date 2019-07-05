@@ -16,7 +16,7 @@ class GsonObjectWriter<T>(private val fileRetriever: (String) -> File, private v
 
     private val gson = Gson()
 
-    override fun writeObject(value: T): Result<Unit, Exception> {
+    override suspend fun writeObject(value: T): Result<Unit, Exception> {
         return try {
             val gsonedString = gson.toJson(value)
             val file = fileRetriever.invoke(extraFileNameInformation)

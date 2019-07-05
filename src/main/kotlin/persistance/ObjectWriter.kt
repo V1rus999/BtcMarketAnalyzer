@@ -9,5 +9,5 @@ import helpers.Result
  **/
 interface ObjectWriter<T> {
 
-    fun writeObject(value: T) : Result<Unit, Exception>
+    suspend fun writeObject(value: T) : Result<Unit, Exception>
 }

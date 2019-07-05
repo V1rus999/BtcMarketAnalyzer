@@ -19,6 +19,7 @@ class LunoExchange : Exchange {
 
     companion object {
         const val exchangeName = "LunoSA"
+        const val exchangePair = "btczar"
     }
 
     private val requestUrl = HttpUrl.parse("https://api.mybitx.com/")
@@ -28,34 +29,19 @@ class LunoExchange : Exchange {
 
     override fun exchangeName(): String = exchangeName
 
-    override fun getTicker(): Result<Ticker.BasicTicker, Exception> {
-        val call = btcApi.getLunoTicker()
-        val tickers: Ticker.BasicTicker?
-
-        try {
-            val response = call.execute()
-            if (response.isSuccessful) {
-                Logger.debug("Got data from ${BinanceExchange.exchangeName} ${response.body()}")
-                tickers = extractTickers(response.body())
-            } else {
-                return Failure(Exception("${exchangeName()} call failed ${response.code()}"))
-            }
-
-        } catch (e: Exception) {
-            return Failure(e)
-        }
-        if (tickers == null) {
-            return Failure(Exception("${exchangeName()} no tickers received"))
-        }
-        return Success(tickers)
-    }
-
-    private fun extractTickers(result: LunoTicker?): Ticker.BasicTicker? =
-        result?.let {
-            Ticker.BasicTicker(
-                result.lastTrade ?: result.ask,
-                "btczar",
+    override suspend fun getTicker(): Result<Ticker.BasicTicker, Exception> {
+        return try {
+            val exchangeTicker = btcApi.getLunoTicker()
+            Logger.debug("Got data from ${BinanceExchange.exchangeName} $exchangeTicker")
+            val tickers = Ticker.BasicTicker(
+                exchangeTicker.lastTrade ?: exchangeTicker.ask,
+                exchangePair,
                 exchangeName()
             )
+
+            Success(tickers)
+        } catch (e: Exception) {
+            Failure(e)
         }
+    }
 }

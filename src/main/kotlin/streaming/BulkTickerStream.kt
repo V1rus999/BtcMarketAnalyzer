@@ -1,9 +1,8 @@
 package streaming
 
+import helpers.*
 import markets.Ticker
 import markets.crypto_exchanges.Exchange
-import helpers.Failure
-import helpers.Success
 import org.pmw.tinylog.Logger
 import persistance.ObjectWriter
 import tickerHandling.InMemoryQueue
@@ -29,20 +28,16 @@ class BulkTickerStream(
 
     override fun startDownloadingTickerData() {
         timer = fixedRateTimer("PairTickerStreamingServiceThread", false, 0L, period = time) {
-            val timeStamp = getTimeStampNow()
-            Logger.info("Starting ticker download for timestamp $timeStamp")
-
-            val networkResults = getTickersFromExchanges()
-            val outputTicker = generateTickerForOutput(timeStamp, networkResults)
-            enqueueNewOutputTicker(outputTicker)
-            writeTickerToFile(outputTicker)
-
-            Logger.info("Done for timestamp $timeStamp, rescheduling next run for $time milliseconds ")
+            execute {
+                val timeStamp = getTimeStampNow()
+                Logger.info("Starting ticker download for timestamp $timeStamp")
+                val networkResults = ior { getTickersFromExchanges() }
+                val outputTicker = generateTickerForOutput(timeStamp, networkResults)
+                enqueueNewOutputTicker(outputTicker)
+                ior { writeTickerToFile(outputTicker) }
+                Logger.info("Done for timestamp $timeStamp, rescheduling next run for $time milliseconds ")
+            }
         }
-    }
-
-    private fun getTickersFromExchanges(): List<Ticker.BasicTicker> = exchanges.mapNotNull {
-        getExchangeResult(it)
     }
 
     private fun generateTickerForOutput(
@@ -55,13 +50,17 @@ class BulkTickerStream(
         queue.enqueue(ticker)
     }
 
-    private fun writeTickerToFile(ticker: Ticker.OutputTicker) {
+    private suspend fun writeTickerToFile(ticker: Ticker.OutputTicker) {
         when (val result = writer.writeObject(ticker)) {
             is Failure -> Logger.error(result.reason, "Issue flushing queue")
         }
     }
 
-    private fun getExchangeResult(exchange: Exchange): Ticker.BasicTicker? =
+    private suspend fun getTickersFromExchanges(): List<Ticker.BasicTicker> = exchanges.mapNotNull {
+        getExchangeResult(it)
+    }
+
+    private suspend fun getExchangeResult(exchange: Exchange): Ticker.BasicTicker? =
         when (val result = exchange.getTicker()) {
             is Success -> {
                 Logger.info("Got results from ${exchange.exchangeName()} ${result.value}")

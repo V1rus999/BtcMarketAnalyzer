@@ -13,7 +13,7 @@ import retrofit2.Call
 interface RetrofitFinMarketApi {
 
     @GET("api/1/ticker?pair=XBTZAR")
-    fun getLunoTicker(): Call<LunoTicker>
+    suspend fun getLunoTicker(): LunoTicker
 
     @GET("latest?base=USD")
     fun getFiatTicker(): Call<Ticker.FiatTicker>
@@ -22,6 +22,6 @@ interface RetrofitFinMarketApi {
     fun getBittrexTicker(): Call<BittrexTicker.BittrexResult>
 
     @GET("api/v3/ticker/price?symbol=BTCUSDT")
-    fun getBinanceTicker(): Call<BinanceTicker>
+    suspend fun getBinanceTicker(): BinanceTicker
 
 }

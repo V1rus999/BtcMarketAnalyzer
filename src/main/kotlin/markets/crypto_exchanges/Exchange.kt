@@ -11,5 +11,5 @@ interface Exchange {
 
     fun exchangeName() : String
 
-    fun getTicker(): Result<Ticker.BasicTicker, Exception>
+    suspend fun getTicker(): Result<Ticker.BasicTicker, Exception>
 }
