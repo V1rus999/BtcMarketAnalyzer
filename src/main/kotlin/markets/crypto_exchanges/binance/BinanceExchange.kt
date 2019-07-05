@@ -16,40 +16,32 @@ class BinanceExchange : Exchange {
 
     companion object {
         const val exchangeName = "Binance"
+        const val exchangePair = "tBTCUSD"
     }
 
     private val requestUrl = HttpUrl.parse("https://api.binance.com/")
     private val retrofit =
-        Retrofit.Builder().baseUrl(requestUrl!!).addConverterFactory(GsonConverterFactory.create()).build()
+        Retrofit.Builder().baseUrl(requestUrl!!)
+            .addConverterFactory(GsonConverterFactory.create()).build()
     private val btcApi = retrofit.create(RetrofitFinMarketApi::class.java)
 
     override fun exchangeName(): String = exchangeName
 
-    override fun getTicker(): Result<Ticker.BasicTicker, Exception> {
-        val call = btcApi.getBinanceTicker()
-        val tickers: Ticker.BasicTicker?
+    override suspend fun getTicker(): Result<Ticker.BasicTicker, Exception> {
+        return try {
+            val tickers: Ticker.BasicTicker?
+            val exchangeTicker = btcApi.getBinanceTicker()
+            Logger.debug("Got data from $exchangeName $exchangeTicker")
+            tickers = Ticker.BasicTicker(
+                exchangeTicker.price,
+                exchangePair,
+                exchangeName()
+            )
 
-        try {
-            val response = call.execute()
-            if (response.isSuccessful) {
-                Logger.debug("Got data from $exchangeName ${response.body()}")
-                tickers = if (response.body() != null) Ticker.BasicTicker(
-                    response.body()!!.price,
-                    "tBTCUSD",
-                    exchangeName()
-                ) else null
-            } else {
-                return Failure(Exception("${exchangeName()} call failed ${response.code()}"))
-            }
-
+            Success(tickers)
         } catch (e: Exception) {
-            return Failure(e)
+            Failure(e)
         }
 
-        if (tickers == null) {
-            return Failure(Exception("${exchangeName()} no tickers received"))
-        }
-
-        return Success(tickers)
     }
 }
