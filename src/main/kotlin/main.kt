@@ -1,3 +1,4 @@
+import helpers.OutputFileHandler
 import markets.ExchangeFactory
 import markets.crypto_exchanges.binance.BinanceExchange
 import markets.crypto_exchanges.luno.LunoExchange
@@ -30,13 +31,15 @@ object Main {
         setupLogging(date)
 
         val exchangeFactory = ExchangeFactory()
+        val outputFileHandler =
+            OutputFileHandler("${LunoExchange.exchangeName}${BinanceExchange.exchangeName}", isDebugRun)
         val lunoBinanceService: TickerStream = BulkTickerStream(
             listOf(
                 exchangeFactory.getExchange(LunoExchange.exchangeName),
                 exchangeFactory.getExchange(BinanceExchange.exchangeName)
             ),
             InMemoryQueue(),
-            GsonObjectWriter(::retrieveOutputFile, "${LunoExchange.exchangeName}${BinanceExchange.exchangeName}")
+            GsonObjectWriter { outputFileHandler.retrieveOutputFile() }
         )
         lunoBinanceService.startDownloadingTickerData()
 
@@ -47,23 +50,6 @@ object Main {
             lunoBinanceService.stopDownloadingTickerData()
             Logger.info("Quitting...")
         }
-    }
-
-    private fun retrieveOutputFile(additionalFileNameInfo: String): File {
-        val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val date = current.format(formatter)
-
-        val outputFile =
-            if (isDebugRun) File("debugtickerData/${date}TickerFor$additionalFileNameInfo.json")
-            else File("tickerData/${date}TickerFor$additionalFileNameInfo.json")
-        if (!outputFile.parentFile.exists()) {
-            outputFile.parentFile.mkdir()
-        }
-
-        if (!outputFile.exists())
-            Logger.info("Created output file at ${outputFile.absolutePath}")
-        return outputFile
     }
 
     private fun setupLogging(date: String) {

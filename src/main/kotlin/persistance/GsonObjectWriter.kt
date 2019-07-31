@@ -11,7 +11,7 @@ import kotlin.Exception
  * @Author: johannesC
  * @Date: 2019-06-01, Sat
  **/
-class GsonObjectWriter<T>(private val fileRetriever: (String) -> File, private val extraFileNameInformation: String) :
+class GsonObjectWriter<T>(private val fileRetriever: () -> File) :
     ObjectWriter<T> {
 
     private val gson = Gson()
@@ -19,7 +19,7 @@ class GsonObjectWriter<T>(private val fileRetriever: (String) -> File, private v
     override suspend fun writeObject(value: T): Result<Unit, Exception> {
         return try {
             val gsonedString = gson.toJson(value)
-            val file = fileRetriever.invoke(extraFileNameInformation)
+            val file = fileRetriever.invoke()
             file.appendText(gsonedString)
             file.appendText("\n")
             Success(Unit)
