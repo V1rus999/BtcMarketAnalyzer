@@ -1,3 +1,3 @@
 # BtcMarketAnalyzer
 
-This analyzer tracks the price of LunoZA and Binance
+This analyzer tracks the price of LunoZA and Binance.
